@@ -43,10 +43,15 @@ def create_turret(mouse_pos):
     mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
     
     if world.tile_map[mouse_tile_num] != 11:
+        #Check ob das Tile besetzt ist
         space_is_free = True
-        
-        turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
-        turret_group.add(turret)
+        for turret in turret_group:
+            if(mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
+                space_is_free = False
+        #Wenn der Platz frei ist, dann setzen wir ein Turret
+        if space_is_free == True:
+            new_turret = Turret(cursor_turret, mouse_tile_x, mouse_tile_y)
+            turret_group.add(new_turret)
 
 #Enemy Gruppe
 enemy_group = pygame.sprite.Group()
