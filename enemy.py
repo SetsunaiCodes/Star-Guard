@@ -2,16 +2,21 @@
 import pygame
 from pygame.math import Vector2
 import math
+from enemy_data import ENEMY_DATA
 
 class Enemy(pygame.sprite.Sprite):
-  def __init__(self, waypoints, image, initial_size=(40,40)):
+  def __init__(self, enemy_type, waypoints, images, initial_size=(40,40)):
     pygame.sprite.Sprite.__init__(self)
     self.waypoints = waypoints
     self.pos = Vector2(self.waypoints[0])
     self.target_waypoint = 1
-    self.speed = 2
+    #Lebensanzahl des Gegners
+    self.health = ENEMY_DATA.get(enemy_type)["health"]
+    #Geschwindigkeit des Gegners
+    self.speed = ENEMY_DATA.get(enemy_type)["speed"]
     self.angle = 0
-    self.original_image = image
+    #Enemy Typ
+    self.original_image = images.get(enemy_type)
     self.scaled_image = pygame.transform.scale(self.original_image, initial_size)
     self.image = pygame.transform.rotate(self.scaled_image, self.angle)
     self.rect = self.image.get_rect()
@@ -45,6 +50,7 @@ class Enemy(pygame.sprite.Sprite):
     dist = self.target - self.pos
     #Mit dem Abstand zum Wegpunkt kann der Winkel berechnet werden
     self.angle = math.degrees(math.atan2(-dist[1], dist[0]))
+    self.angle -= 90
     #Bild drehen und auch auch das Rechteck abändern 
     self.image = pygame.transform.rotate(self.scaled_image, self.angle)
     self.rect = self.image.get_rect()

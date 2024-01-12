@@ -18,13 +18,13 @@ blue = (0,0,255)
 red = (255,0,0)
 speed = c.TILE_SIZE
 x, y = 0, 0
-currentColor = blue
 
 #Fenstereinstellungen treffen
 screen = pygame.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL,c.SCREEN_HEIGHT))
 pygame.display.set_caption("StarGuard")
 
 #Gamebooleans
+last_enemy_spawn = pygame.time.get_ticks()
 placing_turrets = False
 selected_turret = None
 
@@ -38,8 +38,14 @@ map_image = pygame.image.load('levels/map.png').convert_alpha()
 turret_sheet = pygame.image.load('assets/images/turrets/turret_1_new.png').convert_alpha()
 #individual turret image for mouse cursor
 cursor_turret = pygame.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
-#enemy
-enemy_image = pygame.image.load('assets/images/enemies/enemy_1.png').convert_alpha()
+
+#enemies
+enemy_images = {
+    "weak": pygame.image.load('assets/images/enemies/enemy_1_s.png').convert_alpha(),
+    "medium": pygame.image.load('assets/images/enemies/enemy_2_s.png').convert_alpha(),
+    "strong": pygame.image.load('assets/images/enemies/enemy_3_s.png').convert_alpha()
+
+}
 
 #load json data for level
 with open('levels/map.tmj') as file:
@@ -48,6 +54,7 @@ with open('levels/map.tmj') as file:
 #World Gruppe
 world = World(world_data, map_image)
 world.process_data()
+world.process_enemies()
 
 #Turret Gruppe
 turret_group = pygame.sprite.Group()
@@ -76,13 +83,11 @@ def select_turret():
     for turret in turret_group:
         if(mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
             return turret    
+
 #Enemy Gruppe
 enemy_group = pygame.sprite.Group()
 
 
-enemy = Enemy(world.waypoints, enemy_image)
- #Gegner der Gruppe hinzufügen
-enemy_group.add(enemy)
 
 movement_timeout = 75
 last_movement_time = pygame.time.get_ticks()
@@ -114,6 +119,17 @@ while run:
     enemy_group.draw(screen)
     for turret in turret_group:
         turret.draw(screen)
+
+    #Spawn enemies
+    if pygame.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
+        if world.spawned_enemies < len(world.enemy_list):
+            enemy_type = world.enemy_list[world.spawned_enemies]
+            enemy = Enemy(enemy_type, world.waypoints, enemy_images)
+            #Gegner der Gruppe hinzufügen
+            enemy_group.add(enemy)
+            #Counter erhöhen
+            world.spawned_enemies += 1 
+            last_enemy_spawn = pygame.time.get_ticks()
 
     
 
