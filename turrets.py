@@ -59,13 +59,17 @@ class Turret(pygame.sprite.Sprite):
         y_dist = 0
         #Distanz zu jedem Gegner überprüen
         for enemy in enemy_group:
-            x_dist = enemy.pos[0] - self.x
-            y_dist = enemy.pos[1] - self.y
-            dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
-            if dist < self.range:
-                self.target = enemy
-                #Drehung, wenn das Ziel gefunden wurde
-                self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+            if enemy.health > 0:
+                x_dist = enemy.pos[0] - self.x
+                y_dist = enemy.pos[1] - self.y
+                dist = math.sqrt(x_dist ** 2 + y_dist ** 2)
+                if dist < self.range:
+                    self.target = enemy
+                    #Drehung, wenn das Ziel gefunden wurde
+                    self.angle = math.degrees(math.atan2(-y_dist, x_dist))
+                    #damage
+                    self.target.health -= c.DAMAGE
+                    break
 
     def play_animation(self):
         self.original_image = self.animation_list[self.frame_index]

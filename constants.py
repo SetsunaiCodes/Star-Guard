@@ -2,13 +2,19 @@
 ROWS = 15
 COLS = 15
 TILE_SIZE = 32
-#Sidepanel Konstanten erstellen
 SIDE_PANEL = 300
 SCREEN_WIDTH = TILE_SIZE * COLS
 SCREEN_HEIGHT = TILE_SIZE * ROWS
 FPS = 60
-#Enemy
+#Leben und Geld
+HEALTH = 100
+MONEY = 650
 SPAWN_COOLDOWN = 400
-#Turret Konstanten
+TURRET_LEVELS = 3
+#Kosten für ein Turret
+BUY_COST = 200
+KILL_REWARD = 1
 ANIMATION_STEPS = 15
 ANIMATION_DELAY = 150
+#Schaden eines Turrets
+DAMAGE = 5

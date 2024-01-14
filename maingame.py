@@ -51,6 +51,16 @@ enemy_images = {
 with open('levels/map.tmj') as file:
     world_data = json.load(file)
 
+#load in fonts
+text_font = pygame.font.SysFont("Consolas", 24, bold = True)
+large_font = pygame.font.SysFont("Consolas", 36)
+
+#function for outputting text
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x,y))
+
+
 #World Gruppe
 world = World(world_data, map_image)
 world.process_data()
@@ -76,6 +86,8 @@ def create_turret():
         if space_is_free == True:
             new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
+            #costs
+            world.money -= c.BUY_COST
 
 def select_turret():
     mouse_tile_x = x // c.TILE_SIZE
@@ -103,7 +115,7 @@ while run:
     pygame.draw.lines(screen, "grey0", False, world.waypoints)
 
     #draw groups
-    enemy_group.update()
+    enemy_group.update(world)
     turret_group.update(enemy_group)
 
     
@@ -119,7 +131,9 @@ while run:
     enemy_group.draw(screen)
     for turret in turret_group:
         turret.draw(screen)
-
+    
+    draw_text(str(world.health), text_font, "grey100", 0,0)
+    draw_text(str(world.money), text_font, "grey100", 0, 30)
     #Spawn enemies
     if pygame.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
         if world.spawned_enemies < len(world.enemy_list):
@@ -161,7 +175,9 @@ while run:
             last_movement_time = current_time
             selected_turret = select_turret()
     if keys[pygame.K_o] and current_time - last_movement_time > movement_timeout:
-        create_turret()
+        #check if there is enough money
+        if world.money >= c.BUY_COST:
+         create_turret()
 
     screen.blit(cursor_image, (x, y))
 
