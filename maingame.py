@@ -23,7 +23,9 @@ x, y = 0, 0
 screen = pygame.display.set_mode((c.SCREEN_WIDTH + c.SIDE_PANEL,c.SCREEN_HEIGHT))
 pygame.display.set_caption("StarGuard")
 
-#Gamebooleans
+#Gamevariables
+game_over = False
+game_outcome = 0
 last_enemy_spawn = pygame.time.get_ticks()
 placing_turrets = False
 selected_turret = None
@@ -94,7 +96,12 @@ def select_turret():
     mouse_tile_y = y // c.TILE_SIZE
     for turret in turret_group:
         if(mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
-            return turret    
+            return turret 
+
+
+def draw_game_over():
+    pygame.draw.rect(screen, "dodgerblue", (200,200,400), border_radius= 30)
+    draw_text("Game-Over",large_font, "grey0", 310,230)
 
 #Enemy Gruppe
 enemy_group = pygame.sprite.Group()
@@ -114,18 +121,24 @@ while run:
 
     pygame.draw.lines(screen, "grey0", False, world.waypoints)
 
-    #draw groups
-    enemy_group.update(world)
-    turret_group.update(enemy_group)
+    if game_over == False:
+        if world.health <= 0:
+            game_over = True
+            game_outcome = -1 #Verloren
 
+        #draw groups
+        enemy_group.update(world)
+        turret_group.update(enemy_group)
+
+        
+        #Highlight selected turret
+        if selected_turret:
+            if selected_turret.selected == False or selected_turret.selected == None:
+                selected_turret.selected = True
+            else:
+                selected_turret.selected = False
     
-    #Highlight selected turret
-    if selected_turret:
-        if selected_turret.selected == False or selected_turret.selected == None:
-            selected_turret.selected = True
-        else:
-            selected_turret.selected = False
-
+    
 
 
     enemy_group.draw(screen)
@@ -134,18 +147,35 @@ while run:
     
     draw_text(str(world.health), text_font, "grey100", 0,0)
     draw_text(str(world.money), text_font, "grey100", 0, 30)
-    #Spawn enemies
-    if pygame.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
-        if world.spawned_enemies < len(world.enemy_list):
-            enemy_type = world.enemy_list[world.spawned_enemies]
-            enemy = Enemy(enemy_type, world.waypoints, enemy_images)
-            #Gegner der Gruppe hinzufügen
-            enemy_group.add(enemy)
-            #Counter erhöhen
-            world.spawned_enemies += 1 
-            last_enemy_spawn = pygame.time.get_ticks()
+    draw_text(str(world.level), text_font, "grey100", 0,60)
 
     
+
+    if game_over == False:
+        if pygame.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
+            if world.spawned_enemies < len(world.enemy_list):
+                enemy_type = world.enemy_list[world.spawned_enemies]
+                enemy = Enemy(enemy_type, world.waypoints, enemy_images)
+                #Gegner der Gruppe hinzufügen
+                enemy_group.add(enemy)
+                #Counter erhöhen
+                world.spawned_enemies += 1 
+                last_enemy_spawn = pygame.time.get_ticks()
+
+        if world.check_level_complete() == True:
+            world.money += c.LEVEL_COMPLETE_REWARD
+            world.level += 1
+            last_enemy_spawn = pygame.time.get_ticks()
+            world.reset_level()
+            world.process_enemies()
+    #Ergenenzung, wennn der Spieler verliert:
+    else:
+        pygame.draw.rect(screen, "dodgerblue", (200,150,400,200), border_radius=30)
+        if game_outcome == -1:
+            draw_text("GAME OVER", large_font, "grey0", 310, 160)
+            draw_text("R to restart", large_font, "grey0", 290, 200)
+
+
 
     for event in pygame.event.get():
         #Möglichkeit das Spiel zu beenden
@@ -178,7 +208,18 @@ while run:
         #check if there is enough money
         if world.money >= c.BUY_COST:
          create_turret()
-
+    #Restart Option
+    if keys[pygame.K_r] and game_over == True:
+        game_over = False
+        placing_turrets = False
+        select_turret = None
+        last_enemy_spawn = pygame.time.get_ticks()
+        world = World(world_data, map_image)
+        world.process_data()
+        world.process_enemies()
+        enemy_group.empty()
+        turret_group.empty()
+        
     screen.blit(cursor_image, (x, y))
 
     pygame.display.flip()

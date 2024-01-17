@@ -16,6 +16,8 @@ class World():
         self.image = map_image
         self.enemy_list = []
         self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
 
     def process_data(self):
         for layer in self.level_data["layers"]:
@@ -48,6 +50,18 @@ class World():
         #Randomizing enemies
         random.shuffle(self.enemy_list)
         print("randomisierung abgeschlossen")
+
+
+    def check_level_complete(self):
+        if(self.killed_enemies + self.missed_enemies) == len(self.enemy_list):
+            return True
+
+    def reset_level(self):
+        self.enemy_list = []
+        self.spawned_enemies = 0
+        self.killed_enemies = 0
+        self.missed_enemies = 0
+
 
 
     def draw(self, surface):
