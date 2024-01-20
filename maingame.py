@@ -30,11 +30,12 @@ last_enemy_spawn = pygame.time.get_ticks()
 placing_turrets = False
 selected_turret = None
 
+
 #load images
 #cursor
 cursor_image = pygame.image.load('levels/cursor.png').convert_alpha()
 #map
-map_image = pygame.image.load('levels/map.png').convert_alpha()
+map_image = pygame.image.load('levels/map_1.png').convert_alpha()
 
 #turretTest SpriteSheet
 turret_sheet = pygame.image.load('assets/images/turrets/turret_1_new.png').convert_alpha()
@@ -50,7 +51,8 @@ enemy_images = {
 }
 
 #load json data for level
-with open('levels/map.tmj') as file:
+current_level = 1
+with open(f'levels/map_{current_level}.tmj') as file:
     world_data = json.load(file)
 
 #load in fonts
@@ -162,12 +164,22 @@ while run:
                 world.spawned_enemies += 1 
                 last_enemy_spawn = pygame.time.get_ticks()
 
-        if world.check_level_complete() == True:
+        world.check_level_complete()
+        if world.level_complete == True:
             world.money += c.LEVEL_COMPLETE_REWARD
             world.level += 1
+            selected_turret = None
             last_enemy_spawn = pygame.time.get_ticks()
+            current_level += 1
+            placing_turrets = False
             world.reset_level()
+            turret_group.empty()
+            world.image = pygame.image.load(f'levels/map_{current_level}.png').convert_alpha()
+            with open(f'levels/map_{current_level}.tmj') as file:
+                world.level_data = json.load(file)
+            world.process_data()
             world.process_enemies()
+            world.level_complete = False
     #Ergenenzung, wennn der Spieler verliert:
     else:
         pygame.draw.rect(screen, "dodgerblue", (200,150,400,200), border_radius=30)

@@ -18,6 +18,7 @@ class World():
         self.spawned_enemies = 0
         self.killed_enemies = 0
         self.missed_enemies = 0
+        self.level_complete = False
 
     def process_data(self):
         for layer in self.level_data["layers"]:
@@ -54,10 +55,12 @@ class World():
 
     def check_level_complete(self):
         if(self.killed_enemies + self.missed_enemies) == len(self.enemy_list):
-            return True
+            self.level_complete = True
 
     def reset_level(self):
         self.enemy_list = []
+        self.tile_map = []
+        self.waypoints = []
         self.spawned_enemies = 0
         self.killed_enemies = 0
         self.missed_enemies = 0

@@ -14,7 +14,7 @@ TURRET_LEVELS = 3
 #Kosten für ein Turret
 BUY_COST = 200
 #1 Punkt für das töten eines Gegners
-KILL_REWARD = 1
+KILL_REWARD = 50
 #100 Punkte für das erfolgreiche abschließen eines Levels
 LEVEL_COMPLETE_REWARD = 100
 ANIMATION_STEPS = 15
