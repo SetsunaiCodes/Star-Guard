@@ -38,19 +38,15 @@ class World():
             self.waypoints.append((temp_x, temp_y))
         
     def process_enemies(self):
-        print("process enemies gestartet")
         enemies = ENEMY_SPAWN_DATA[self.level-1]
         for enemy_type in enemies:
-            print("Sorte hinzugefügt")
             #Speichern wie viele Gegner ich von welcher Sorte brauche
             enemies_to_spawn = enemies[enemy_type]
             #Gegnerinstanzen erstellen
             for enemy in range(enemies_to_spawn):
-                print("Gegner in Liste hinzugefügt")
                 self.enemy_list.append(enemy_type)
         #Randomizing enemies
         random.shuffle(self.enemy_list)
-        print("randomisierung abgeschlossen")
 
 
     def check_level_complete(self):

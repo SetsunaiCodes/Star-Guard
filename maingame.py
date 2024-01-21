@@ -5,6 +5,7 @@ from enemy import Enemy
 from turrets import Turret
 from world import World
 import constants as c
+from turret_data import TURRET_DATA
 
 
 
@@ -38,10 +39,14 @@ cursor_image = pygame.image.load('levels/cursor.png').convert_alpha()
 map_image = pygame.image.load('levels/map_1.png').convert_alpha()
 
 #turretTest SpriteSheet
-turret_sheet = pygame.image.load('assets/images/turrets/turret_1_new.png').convert_alpha()
+turret_sheet_base = pygame.image.load('assets/images/turrets/turret_1_new.png').convert_alpha()
+turret_sheet_medium = pygame.image.load('assets/images/turrets/turret_2_new.png').convert_alpha()
+turret_sheet_strong = pygame.image.load('assets/images/turrets/turret_3_new.png').convert_alpha()
 #individual turret image for mouse cursor
 cursor_turret = pygame.image.load('assets/images/turrets/cursor_turret.png').convert_alpha()
 
+turret_sheet = turret_sheet_base
+turret_type = "base"
 #enemies
 enemy_images = {
     "weak": pygame.image.load('assets/images/enemies/enemy_1_s.png').convert_alpha(),
@@ -88,7 +93,7 @@ def create_turret():
                 space_is_free = False
         #Wenn der Platz frei ist, dann setzen wir ein Turret
         if space_is_free == True:
-            new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
+            new_turret = Turret(turret_type, turret_sheet, mouse_tile_x, mouse_tile_y)
             turret_group.add(new_turret)
             #costs
             world.money -= c.BUY_COST
@@ -220,6 +225,22 @@ while run:
         #check if there is enough money
         if world.money >= c.BUY_COST:
          create_turret()
+
+    if keys[pygame.K_l]:
+        if keys[pygame.K_v] and current_time - last_movement_time > movement_timeout:
+            #Switch between Turrets - right Strong Turret
+            
+            turret_sheet = turret_sheet_strong
+            turret_type = "strong"
+        if keys[pygame.K_c] and  current_time - last_movement_time > movement_timeout:
+            #Switch between Turrets - up Medium Turret
+            turret_sheet = turret_sheet_medium
+            turret_type = "medium"
+        if keys[pygame.K_x] and  current_time - last_movement_time > movement_timeout:
+            #Switch between Turrets - left Base Turret
+            turret_sheet = turret_sheet_base
+            turret_type = "base"
+        
     #Restart Option
     if keys[pygame.K_r] and game_over == True:
         game_over = False

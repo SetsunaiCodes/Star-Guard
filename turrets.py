@@ -2,12 +2,13 @@
 import pygame
 import math
 import constants as c
+from turret_data import TURRET_DATA 
 
 class Turret(pygame.sprite.Sprite):
-    def __init__(self, sprite_sheet, tile_x, tile_y):
+    def __init__(self, turret_type, sprite_sheet, tile_x, tile_y):
         pygame.sprite.Sprite.__init__(self)
-        self.range = 90
-        self.cooldown = 1000
+        self.range = TURRET_DATA.get(turret_type)["range"]
+        self.cooldown = TURRET_DATA.get(turret_type)["attack_cooldown"]
         self.last_shot = pygame.time.get_ticks()
         self.selected = False
         self.target = None
