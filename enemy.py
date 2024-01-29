@@ -36,7 +36,7 @@ class Enemy(pygame.sprite.Sprite):
     else:
       #enemy has reached the end of the path
       self.kill()
-      world.health -= 1
+      world.health -= 15
       world.missed_enemies += 1
 
     #calculate distance to target

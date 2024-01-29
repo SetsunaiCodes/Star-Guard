@@ -62,6 +62,15 @@ enemy_images = {
     "strong": pygame.image.load("assets/images/enemies/enemy_3_s.png").convert_alpha(),
 }
 
+#turret icons
+turret_icons = {
+    "base": pygame.image.load("assets/images/turrets/base_turret_icon.png").convert_alpha(),
+    "medium": pygame.image.load("assets/images/turrets/medium_turret_icon.png").convert_alpha(),
+    "strong": pygame.image.load("assets/images/turrets/strong_turret_icon.png").convert_alpha()
+}
+
+current_turret_icon = turret_icons[f"{turret_type}"]
+
 # Game Over Screen Image
 game_over_image = pygame.image.load("assets/images/ZerstörtesRaumschiff.jpeg")
 game_over_image = pygame.transform.scale(
@@ -115,7 +124,7 @@ def create_turret():
     # calculate the sequential number of the tile
     mouse_tile_num = (mouse_tile_y * c.COLS) + mouse_tile_x
 
-    if world.tile_map[mouse_tile_num] != 80:
+    if world.tile_map[mouse_tile_num] == 99:
         # Check ob das Tile besetzt ist
         space_is_free = True
         for turret in turret_group:
@@ -142,6 +151,10 @@ enemy_group = pygame.sprite.Group()
 movement_timeout = 75
 last_movement_time = pygame.time.get_ticks()
 
+timer = 0
+timer_abgelaufen = 1000
+text_sichtbar = True
+
 # game loop
 run = True
 while run:
@@ -150,7 +163,14 @@ while run:
     if attract_mode == True:
         screen.blit(attract_mode_bg, (0, 0))
         screen.blit(attract_mode_logo, (130, 100))
-        draw_text("Press G to start", text_font, "grey100", 125, 350)
+        timer += 30
+        if timer >= timer_abgelaufen:
+            timer = 0
+            text_sichtbar = not text_sichtbar 
+        
+        if text_sichtbar:
+            draw_text("Press G to start", text_font, "grey100", 125, 350)
+            
 
     else:
         screen.fill("grey100")
@@ -174,19 +194,20 @@ while run:
                     or selected_turret.selected == None
                 ):
                     selected_turret.selected = True
-                else:
-                    selected_turret.selected = False
+
 
         enemy_group.draw(screen)
         for turret in turret_group:
             turret.draw(screen)
 
         screen.blit(heart_icon, (40, 5))
-        screen.blit(coin_icon, (95, 5))
-        draw_text("Level: ", text_font, "grey100", 200, 7)
+        screen.blit(coin_icon, (120, 5))
+        draw_text("Level: ", text_font, "grey100", 210, 7)
         draw_text(str(world.health), text_font, "grey100", 75, 7)
-        draw_text(str(world.money), text_font, "grey100", 125, 7)
-        draw_text(str(world.level), text_font, "grey100", 285, 7)
+        draw_text(str(world.money), text_font, "grey100", 150, 7)
+        draw_text(str(world.level), text_font, "grey100", 295, 7)
+        pygame.draw.rect(screen, "grey100",(c.SCREEN_WIDTH-60,5,32,32))
+        screen.blit(turret_icons[f"{turret_type}"], (c.SCREEN_WIDTH-60, 5))
 
         if game_over == False:
             if pygame.time.get_ticks() - last_enemy_spawn > c.SPAWN_COOLDOWN:
@@ -221,8 +242,13 @@ while run:
         else:
             screen.blit(game_over_image, (0, 0))
             if game_outcome == -1:
-                draw_text("Game-Over", large_font, "white", 120, 190)
-                draw_text("Press R to restart", text_font, "white", 65, 220)
+                 timer += 30
+                 if timer >= timer_abgelaufen:
+                    timer = 0
+                    text_sichtbar = not text_sichtbar 
+                 if text_sichtbar:
+                    draw_text("Game-Over", large_font, "white", 135, 190)
+                    draw_text("Press R to restart", text_font, "white", 121, 230)
 
     for event in pygame.event.get():
         # Möglichkeit das Spiel zu beenden
@@ -235,21 +261,29 @@ while run:
         if y > 0:
             y -= speed
             last_movement_time = current_time
+            if(selected_turret):
+                selected_turret.selected = None
             selected_turret = select_turret()
     if keys[pygame.K_s] and current_time - last_movement_time > movement_timeout:
         if y < c.SCREEN_HEIGHT - c.TILE_SIZE:
             y += speed
             last_movement_time = current_time
+            if(selected_turret):
+                selected_turret.selected = None
             selected_turret = select_turret()
     if keys[pygame.K_a] and current_time - last_movement_time > movement_timeout:
         if x > 0:
             x -= speed
             last_movement_time = current_time
+            if(selected_turret):
+                selected_turret.selected = None
             selected_turret = select_turret()
     if keys[pygame.K_d] and current_time - last_movement_time > movement_timeout:
         if x < c.SCREEN_WIDTH - c.TILE_SIZE:
             x += speed
             last_movement_time = current_time
+            if(selected_turret):
+                selected_turret.selected = None
             selected_turret = select_turret()
     if keys[pygame.K_o] and current_time - last_movement_time > movement_timeout:
         # check if there is enough money
@@ -276,8 +310,7 @@ while run:
     # Restart Option
     if keys[pygame.K_r] and game_over == True:
         game_over = False
-        placing_turrets = False
-        select_turret = None
+        selected_turret = None
         last_enemy_spawn = pygame.time.get_ticks()
         world = World(world_data, map_image)
         world.process_data()
