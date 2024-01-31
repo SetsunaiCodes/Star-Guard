@@ -247,7 +247,7 @@ while run:
                     timer = 0
                     text_sichtbar = not text_sichtbar 
                  if text_sichtbar:
-                    draw_text("Game-Over", large_font, "white", 135, 190)
+                    draw_text("Game-Over", uheaval_font_big, "white", 135, 190)
                     draw_text("Press R to restart", uheaval_font_small, "white", 121, 230)
 
     for event in pygame.event.get():
