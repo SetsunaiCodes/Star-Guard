@@ -289,23 +289,27 @@ while run:
         # check if there is enough money
         if world.money >= c.BUY_COST:
             create_turret()
+
     if keys[pygame.K_g] and current_time - last_movement_time > movement_timeout:
         attract_mode = False
 
-    if keys[pygame.K_l]:
-        if keys[pygame.K_v] and current_time - last_movement_time > movement_timeout:
-            # Switch between Turrets - right Strong Turret
-
-            turret_sheet = turret_sheet_strong
-            turret_type = "strong"
-        if keys[pygame.K_c] and current_time - last_movement_time > movement_timeout:
-            # Switch between Turrets - up Medium Turret
+    if keys[pygame.K_l] and current_time - last_movement_time > movement_timeout:
+        if turret_type == "base":
             turret_sheet = turret_sheet_medium
             turret_type = "medium"
-        if keys[pygame.K_x] and current_time - last_movement_time > movement_timeout:
-            # Switch between Turrets - left Base Turret
+            last_movement_time = current_time
+
+        elif turret_type == "medium":
+            turret_sheet = turret_sheet_strong
+            turret_type = "strong"
+            last_movement_time = current_time
+
+        elif turret_type == "strong":
             turret_sheet = turret_sheet_base
             turret_type = "base"
+            last_movement_time = current_time
+            
+
 
     # Restart Option
     if keys[pygame.K_r] and game_over == True:
