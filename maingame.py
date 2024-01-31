@@ -30,7 +30,9 @@ game_outcome = 0
 last_enemy_spawn = pygame.time.get_ticks()
 placing_turrets = False
 selected_turret = None
-
+#Fonts
+uheaval_font_small = pygame.font.Font("assets/UPHEAVTT.TTF", 25)
+uheaval_font_big = pygame.font.Font("assets/UPHEAVTT.TTF", 40)
 
 # load images
 # cursor
@@ -97,9 +99,7 @@ current_level = 1
 with open(f"levels/map_{current_level}.tmj") as file:
     world_data = json.load(file)
 
-# load in fonts
-text_font = pygame.font.SysFont("upheavalttbrk", 25)
-large_font = pygame.font.SysFont("upheavalttbrk", 40)
+
 
 
 # function for outputting text
@@ -169,7 +169,7 @@ while run:
             text_sichtbar = not text_sichtbar 
         
         if text_sichtbar:
-            draw_text("Press G to start", text_font, "grey100", 125, 350)
+            draw_text("Press G to start", uheaval_font_small, "grey100", 125, 350)
             
 
     else:
@@ -202,10 +202,10 @@ while run:
 
         screen.blit(heart_icon, (40, 5))
         screen.blit(coin_icon, (120, 5))
-        draw_text("Level: ", text_font, "grey100", 210, 7)
-        draw_text(str(world.health), text_font, "grey100", 75, 7)
-        draw_text(str(world.money), text_font, "grey100", 150, 7)
-        draw_text(str(world.level), text_font, "grey100", 295, 7)
+        draw_text("Level: ", uheaval_font_small, "grey100", 210, 7)
+        draw_text(str(world.health), uheaval_font_small, "grey100", 75, 7)
+        draw_text(str(world.money), uheaval_font_small, "grey100", 150, 7)
+        draw_text(str(world.level), uheaval_font_small, "grey100", 295, 7)
         pygame.draw.rect(screen, "grey100",(c.SCREEN_WIDTH-60,5,32,32))
         screen.blit(turret_icons[f"{turret_type}"], (c.SCREEN_WIDTH-60, 5))
 
@@ -248,7 +248,7 @@ while run:
                     text_sichtbar = not text_sichtbar 
                  if text_sichtbar:
                     draw_text("Game-Over", large_font, "white", 135, 190)
-                    draw_text("Press R to restart", text_font, "white", 121, 230)
+                    draw_text("Press R to restart", uheaval_font_small, "white", 121, 230)
 
     for event in pygame.event.get():
         # Möglichkeit das Spiel zu beenden
