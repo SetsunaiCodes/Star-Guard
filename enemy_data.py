@@ -1,4 +1,6 @@
-#enemy_data.py
+# || enemy_data.py ||
+
+# Gegner pro Level
 ENEMY_SPAWN_DATA = [
   {
     #1
@@ -92,6 +94,7 @@ ENEMY_SPAWN_DATA = [
   }
 ]
 
+# Metadaten für die 3 Gegnertypen
 ENEMY_DATA = {
     "weak": {
     "health": 10,

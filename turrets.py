@@ -1,4 +1,4 @@
-#turrets.py
+#|| turrets.py ||
 import pygame
 import math
 import constants as c
@@ -26,6 +26,7 @@ class Turret(pygame.sprite.Sprite):
         #Startwinkel
         self.angle = 90
         self.original_image = self.animation_list[self.frame_index]
+
         #entsprechende Drehung
         self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect()
@@ -39,7 +40,7 @@ class Turret(pygame.sprite.Sprite):
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
 
-    
+    # Einladen aller Sprites und dann in einer Liste speichern
     def load_images(self):
         size = self.sprite_sheet.get_height()
         animation_list = []
@@ -49,16 +50,20 @@ class Turret(pygame.sprite.Sprite):
             animation_list.append(temp_img_scaled)
         return animation_list
     
+    # Sprites aktualisieren 
     def update(self,enemy_group):
         if pygame.time.get_ticks() - self.last_shot > self.cooldown:
             self.play_animation()
             self.pick_target(enemy_group)
 
+
+    # Ziel definieren
     def pick_target(self,enemy_group):
-        #Den Gegner finden
+
         x_dist = 0
         y_dist = 0
-        #Distanz zu jedem Gegner überprüen
+
+        #Distanz zu jedem (sich aktuell auf dem Feld befindenden) Gegner überprüen
         for enemy in enemy_group:
             if enemy.health > 0:
                 x_dist = enemy.pos[0] - self.x
@@ -72,6 +77,7 @@ class Turret(pygame.sprite.Sprite):
                     self.target.health -= c.DAMAGE
                     break
 
+    # Animationsliste durchlaufen
     def play_animation(self):
         self.original_image = self.animation_list[self.frame_index]
         if pygame.time.get_ticks() - self.update_time > c.ANIMATION_DELAY:
@@ -81,8 +87,7 @@ class Turret(pygame.sprite.Sprite):
             self.frame_index = 0
             self.last_shot = pygame.time.get_ticks()
         
-    #Drawmethode anpassen, damit in jedem Draw (60 Mal die Sekunde)
-    #gedreht wird.
+    # Turret anzeigen
     def draw(self, surface):
         self.image = pygame.transform.rotate(self.original_image, self.angle -90)
         self.rect = self.image.get_rect()

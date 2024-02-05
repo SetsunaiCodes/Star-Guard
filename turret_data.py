@@ -1,4 +1,5 @@
-#turret_data.py
+# || Metadaten von Turrets | turret_data.py ||
+
 TURRET_DATA = {
     "base": {
     "attack_cooldown": 1000,
