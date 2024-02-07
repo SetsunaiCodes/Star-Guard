@@ -16,7 +16,7 @@ pygame.init()
 clock = pygame.time.Clock()
 
 # Fenstereinstellungen
-screen = pygame.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT + c.SIDE_PANEL))
+screen = pygame.display.set_mode((c.SCREEN_WIDTH, c.SCREEN_HEIGHT))
 pygame.display.set_caption("StarGuard")
 
 # Variablen für das Spiel
@@ -38,7 +38,7 @@ cursor_image = pygame.image.load("levels/cursor.png").convert_alpha()
 map_image = pygame.image.load("levels/map_1.png").convert_alpha()
 turret_sheet_base = pygame.image.load( "assets/images/turrets/turret_1_new.png").convert_alpha()
 turret_sheet_medium = pygame.image.load( "assets/images/turrets/turret_2_new.png").convert_alpha()
-turret_sheet_strong = pygame.image.load( "assets/images/turrets/turret_3_new.png").convert_alpha()
+turret_sheet_strong = pygame.image.load( "assets/images/turrets/turret_4_new.png").convert_alpha()
 cursor_turret = pygame.image.load( "assets/images/turrets/cursor_turret.png" ).convert_alpha()
 attract_mode_logo = pygame.image.load("assets/images/LogoGepixelt.png")
 heart_icon = pygame.image.load("assets/images/Heart.png")
@@ -132,6 +132,9 @@ def select_turret():
 enemy_group = pygame.sprite.Group()
 movement_timeout = 75
 last_movement_time = pygame.time.get_ticks()
+
+
+
 timer = 0
 timer_abgelaufen = 1000
 text_sichtbar = True
